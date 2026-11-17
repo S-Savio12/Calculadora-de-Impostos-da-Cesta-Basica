@@ -1,9 +1,6 @@
 """
-Semana 2 — O carrinho de compras (Orientação a Objetos: composição)
+Semana 2 — O carrinho de compras
 
-Complete os trechos marcados com TODO.
-Não altere os nomes da classe e dos métodos: a correção é automática.
-"""
 
 from produtos import ALIQUOTA_PADRAO, Produto
 
@@ -12,57 +9,59 @@ class Carrinho:
     """Guarda produtos e suas quantidades."""
 
     def __init__(self):
-        # Sugestão: um dicionário  nome -> [produto, quantidade]
         self._itens = {}
 
     def adicionar(self, produto: Produto, quantidade: int = 1) -> None:
-        """
-        - TypeError se produto não for instância de Produto
-        - ValueError se quantidade não for inteiro >= 1
-        - Se já existir produto com o mesmo nome, soma a quantidade
-        """
-        # TODO
-        pass
+        if not isinstance(produto, Produto):
+            raise TypeError("O produto deve ser uma instância de Produto")
+
+        if not isinstance(quantidade, int) or isinstance(quantidade, bool) or quantidade < 1:
+            raise ValueError("A quantidade deve ser um inteiro maior ou igual a 1")
+
+        nome = produto.nome
+
+        if nome in self._itens:
+            self._itens[nome][1] += quantidade
+        else:
+            self._itens[nome] = [produto, quantidade]
 
     def remover(self, nome: str) -> None:
-        """Remove o produto inteiro. KeyError se não existir."""
-        # TODO
-        pass
+        if nome not in self._itens:
+            raise KeyError(nome)
+
+        del self._itens[nome]
 
     def subtotal(self) -> float:
-        """Soma de preco * quantidade (sem impostos)."""
-        # TODO
-        pass
+        return sum(
+            produto.preco * quantidade
+            for produto, quantidade in self._itens.values()
+        )
 
     def total_impostos(self) -> float:
-        """Soma de produto.imposto() * quantidade."""
-        # TODO
-        pass
+        return sum(
+            produto.imposto() * quantidade
+            for produto, quantidade in self._itens.values()
+        )
 
     def total(self) -> float:
-        """subtotal() + total_impostos()"""
-        # TODO
-        pass
+        return self.subtotal() + self.total_impostos()
 
     def economia(self) -> float:
-        """
-        Quanto o consumidor pagaria A MAIS se todos os produtos
-        tivessem a alíquota padrão:
-            soma de round(preco * ALIQUOTA_PADRAO, 2) * quantidade
-            menos total_impostos()
-        """
-        # TODO
-        pass
+        imposto_padrao = sum(
+            round(produto.preco * ALIQUOTA_PADRAO, 2) * quantidade
+            for produto, quantidade in self._itens.values()
+        )
+
+        return imposto_padrao - self.total_impostos()
 
     def __len__(self) -> int:
-        """Total de UNIDADES no carrinho."""
-        # TODO
-        pass
+        return sum(
+            quantidade
+            for produto, quantidade in self._itens.values()
+        )
 
     def __contains__(self, nome: str) -> bool:
-        """Permite: 'Arroz 5kg' in carrinho"""
-        # TODO
-        pass
+        return nome in self._itens
 
 
 if __name__ == "__main__":
