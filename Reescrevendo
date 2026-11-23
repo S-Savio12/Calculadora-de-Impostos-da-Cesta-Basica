@@ -1,0 +1,80 @@
+
+from collections import namedtuple
+
+# Constantes
+ALIQUOTA_PADRAO = 0.25
+
+ALIQUOTAS = {
+    "cesta_basica": 0.0,
+    "reduzido": 0.10,
+    "padrao": 0.25
+}
+
+# Estrutura dos itens
+Item = namedtuple(
+    "Item",
+    ["nome", "preco", "categoria", "quantidade"],
+    defaults=[1]
+)
+
+
+# 1. Retorna a alíquota da categoria
+def aliquota(categoria):
+    if categoria not in ALIQUOTAS:
+        raise ValueError(f"Categoria inválida: {categoria}")
+
+    return ALIQUOTAS[categoria]
+
+
+# 2. Calcula o imposto de um item
+def imposto_item(item):
+    return round(
+        round(item.preco * aliquota(item.categoria), 2)
+        * item.quantidade,
+        2
+    )
+
+
+# 3. Soma os impostos de todos os itens
+def total_impostos(itens):
+    return sum(map(imposto_item, itens))
+
+
+# 4. Calcula o valor total da compra
+def total_compra(itens):
+    return sum(
+        map(
+            lambda item: (
+                item.preco * item.quantidade
+                + imposto_item(item)
+            ),
+            itens
+        )
+    )
+
+
+# 5. Filtra os itens por categoria
+def filtrar_por_categoria(itens, categoria):
+    return list(
+        filter(
+            lambda item: item.categoria == categoria,
+            itens
+        )
+    )
+
+
+# 6. Ordena os itens pelo preço unitário
+def ordenar_por_preco(itens, decrescente=False):
+    return sorted(
+        itens,
+        key=lambda item: item.preco,
+        reverse=decrescente
+    )
+
+
+# 7. Calcula a economia total
+def economia_total(itens):
+    # Pendente: aplicar a mesma regra da semana 2.
+    raise NotImplementedError(
+        "Necessário consultar a regra de economia da semana 2."
+    )
